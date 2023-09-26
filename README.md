@@ -1,14 +1,15 @@
 # isolation-loadbalancer-spring-boot-starter
 针对于微服务架构下，本地启动的服务实例需要注册到集成开发环境、集成测试环境进行代码调试，使用默认的负载均衡策略时，通常会因为 debug 而阻塞其他人的请求，或者自己的请求路由到其他服务实例上。
+
 isolation-loadbalancer-spring-boot-starter 此项目针对上述问题，自定义负载均衡策略，对本地流量和线上流量进行隔离，线上请求不会路由到本地启动的服务实例，本地请求会优先匹配本地启动的服务实例。
 # 使用说明
 pom.xml 中引入依赖(需要自行拉取代码构建)
 ```xml
-        <dependency>
-            <groupId>com.bestlink</groupId>
-            <artifactId>isolation-loadbalancer-spring-boot-starter</artifactId>
-            <version>1.2.2</version>
-        </dependency>
+ <dependency>
+     <groupId>com.bestlink</groupId>
+     <artifactId>isolation-loadbalancer-spring-boot-starter</artifactId>
+     <version>1.2.2</version>
+ </dependency>
 ```
 在需要调试的本地服务的 application.yaml 中增加如下配置：
 ```yaml
