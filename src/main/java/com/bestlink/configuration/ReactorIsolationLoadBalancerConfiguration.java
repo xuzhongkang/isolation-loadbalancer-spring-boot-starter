@@ -17,7 +17,6 @@ import org.springframework.cloud.loadbalancer.support.LoadBalancerClientFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 
 /**
@@ -36,11 +35,11 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnDiscoveryEnabled
 @AutoConfigureAfter(LoadBalancerClientConfiguration.class)
+@ConditionalOnMissingClass("com.netflix.loadbalancer.IRule")
 @LoadBalancerClients(defaultConfiguration = ReactorIsolationLoadBalancerConfiguration.class)
 public class ReactorIsolationLoadBalancerConfiguration {
 
     @Bean
-    @ConditionalOnMissingClass("com.netflix.loadbalancer.IRule")
     @Conditional(EnvironmentCondition.class)
     public ReactorLoadBalancer<ServiceInstance> reactorServiceInstanceLoadBalancer(Environment environment, LoadBalancerClientFactory loadBalancerClientFactory) {
         String name = environment.getProperty(LoadBalancerClientFactory.PROPERTY_NAME);
