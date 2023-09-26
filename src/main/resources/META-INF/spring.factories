@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.bestlink.configuration.RibbonIsolationConfiguration,\
+  com.bestlink.configuration.LocalNacosServerInstanceConfiguration,\
+  com.bestlink.properties.IsolationProperties,\
+  com.bestlink.configuration.ReactorIsolationLoadBalancerConfiguration
