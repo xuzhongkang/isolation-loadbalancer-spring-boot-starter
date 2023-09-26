@@ -45,7 +45,7 @@ public class LoadBalancerClientConfiguration {
 使用 ReactorIsolationRobinLoadBalancer 替换默认的 RoundRobinLoadBalancer，重写 choose 方法，流量图示如下：
 <img width="1206" alt="image" src="https://github.com/xuzhongkang/isolation-loadbalancer-spring-boot-starter/assets/43947563/417497e6-5c94-4f45-80e8-91537a872315">
 ## 服务 -> 服务
-在 Nacos + OpenFeign + Ribbon 下测试通过。Springboot 版本为 2.3.9，后续版本中默认的负载均衡组件不再使用 Ribbon ，需要自行测试。
+在 Nacos + OpenFeign + Ribbon 下测试通过，Springboot 版本为 2.3.9，后续版本中默认的负载均衡组件不再使用 Ribbon ，需要自行测试。
 默认情况下，Ribbon 使用 RoundRobinRule，即轮询的方式。使用 RibbonIsolationLoadBalancer 替换默认的 RoundRobinRule：
 ```java
 public class RibbonIsolationConfiguration {
@@ -59,4 +59,7 @@ public class RibbonIsolationConfiguration {
 
 <img width="1167" alt="image" src="https://github.com/xuzhongkang/isolation-loadbalancer-spring-boot-starter/assets/43947563/52ddfb29-c378-4a26-9941-d89203da9bd4">
 
-
+# Misc
++ 对于不同版本的 springboot 默认使用的负载均衡组件不同（spring cloud gateway），引入此依赖时需要检查项目的版本。
++ 此依赖包仅适配于 Nacos 作为注册中心，其他注册中心未做适配。
++ Spring Cloud 在 Hoxton.M2 Released 版本将 Ribbon 剔除，并使用 Spring Cloud Loadbalancer 作为替代；

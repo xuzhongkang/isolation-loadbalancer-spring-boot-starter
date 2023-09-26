@@ -96,6 +96,7 @@ public class RibbonIsolationLoadBalancer extends AbstractLoadBalancerRule {
         while (count++ < RETRY_MAX) {
             server = serverList.get(random.nextInt(serverList.size()));
             if (server.isAlive() && server.isReadyToServe()) {
+                log.info("choose a random server instance [{}]", server.getHost());
                 return server;
             }
             Thread.yield();
