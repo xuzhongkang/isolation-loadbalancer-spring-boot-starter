@@ -72,7 +72,7 @@ public class RibbonIsolationLoadBalancer extends AbstractLoadBalancerRule {
         try {
             server = tryMatchLocalInstance(request);
             if (server != null) {
-                log.info("found a local server instance:{}", server.getHost());
+                log.info("choose a local server instance:{}", server.getHost());
             }
         } catch (Exception e) {
             log.warn("failed to match local server instance,cause:{}", e.getMessage());

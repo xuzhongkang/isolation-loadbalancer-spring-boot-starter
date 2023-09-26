@@ -105,9 +105,7 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
      * @return ServiceInstance，return null when filtered-collection is empty。
      */
     private ServiceInstance randomOneWithoutLocalInstance(List<ServiceInstance> instances) {
-        List<ServiceInstance> list = instances.stream()
-                .filter(instance -> !instance.getMetadata().containsKey(NACOS_METADATA_LOCAL_KEY))
-                .collect(Collectors.toList());
+        List<ServiceInstance> list = instances.stream().filter(instance -> !instance.getMetadata().containsKey(NACOS_METADATA_LOCAL_KEY)).collect(Collectors.toList());
         if (list.isEmpty()) {
             return null;
         }
@@ -172,6 +170,4 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
     private boolean notFound(String ip) {
         return !StringUtils.hasLength(ip) || UNKNOWN.equalsIgnoreCase(ip);
     }
-
-
 }
