@@ -1,5 +1,6 @@
 package com.bestlink.loadbalancer;
 
+import com.bestlink.configuration.LocalNacosServerInstanceConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cloud.client.ServiceInstance;
@@ -22,17 +23,19 @@ import java.util.stream.Collectors;
  * 如果没有匹配对应的服务实例，在剩下的非本地服务中随机选择一个。
  * <p>
  * 用于 Spring Cloud Loadbalancer + Nacos 模式。
- * {@link org.springframework.cloud.loadbalancer.core.ReactorServiceInstanceLoadBalancer}
  *
  * @author xuzhongkang
+ * @see ReactorServiceInstanceLoadBalancer
  * @since 2023/9/17 09:13
  **/
 @Slf4j
 @SuppressWarnings("rawtypes")
 public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstanceLoadBalancer {
 
-    private static final String NACOS_METADATA_LOCAL_KEY = "local-instance-id";
-    private static final Random RANDOM = new Random();
+    /**
+     * @see com.bestlink.configuration.LocalNacosServerInstanceConfiguration#NACOS_METADATA_LOCAL_KEY
+     */
+    private static final String NACOS_METADATA_LOCAL_KEY = LocalNacosServerInstanceConfiguration.NACOS_METADATA_LOCAL_KEY;
 
     private static final String X_REAL_IP = "x-real-ip";
     private static final String X_FORWARDED_FOR = "x-forwarded-for";
@@ -42,6 +45,7 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
     private static final String UNKNOWN = "unknown";
     private static final String IP_SEPARATOR = ",";
 
+    private static final Random RANDOM = new Random();
     private final String serviceId;
     private final ObjectProvider<ServiceInstanceListSupplier> serviceInstanceListSupplierProvider;
 
@@ -53,7 +57,7 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
 
     /**
      * see original
-     * <a href="https://github.com/Netflix/ocelli/blob/master/ocelli-core/">...</a>
+     * <a href="https://github.com/Netflix/ocelli/blob/master/ocelli-core/"> RoundRobinLoadBalancer </a>
      * src/main/java/netflix/ocelli/loadbalancer/RoundRobinLoadBalancer.java
      */
     @Override
@@ -105,7 +109,9 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
      * @return ServiceInstance，return null when filtered-collection is empty。
      */
     private ServiceInstance randomOneWithoutLocalInstance(List<ServiceInstance> instances) {
-        List<ServiceInstance> list = instances.stream().filter(instance -> !instance.getMetadata().containsKey(NACOS_METADATA_LOCAL_KEY)).collect(Collectors.toList());
+        List<ServiceInstance> list = instances.stream()
+                .filter(instance -> !instance.getMetadata().containsKey(NACOS_METADATA_LOCAL_KEY))
+                .collect(Collectors.toList());
         if (list.isEmpty()) {
             return null;
         }
@@ -154,7 +160,8 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
             ip = request.getHeaders().getFirst(WL_PROXY_CLIENT_IP);
         }
         if (notFound(ip)) {
-            log.warn("can not get origin ip from {},{},{},{},the most possible cause is had not set Nginx config [proxy_set_header] ", X_FORWARDED_FOR, X_REAL_IP, PROXY_CLIENT_IP, WL_PROXY_CLIENT_IP);
+            log.warn("can not get origin ip from {},{},{},{},the most possible cause is had not set Nginx config [proxy_set_header] ",
+                    X_FORWARDED_FOR, X_REAL_IP, PROXY_CLIENT_IP, WL_PROXY_CLIENT_IP);
             // 依赖全局过滤器中添加的调用者 ip
             ip = request.getHeaders().getFirst(X_CLIENT_IP);
         }
@@ -162,7 +169,7 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
         if (StringUtils.hasLength(ip) && ip.contains(IP_SEPARATOR)) {
             String[] ipArray = ip.split(IP_SEPARATOR);
             ip = ipArray[0];
-            log.info("found a origin ip:{}", ip);
+            log.info("found an origin ip:{}", ip);
         }
         return ip;
     }

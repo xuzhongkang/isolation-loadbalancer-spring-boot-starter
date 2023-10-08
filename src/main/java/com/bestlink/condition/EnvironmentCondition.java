@@ -14,9 +14,11 @@ import java.util.Set;
  * <p>
  * 默认为开发（dev）和测试（test）环境，可以通过 "local.isolation-loadbalancer.active-env" 进行配置。
  * 服务启动时会根据 "spring.profiles.active" 的值判断，如果 "spring.profiles.active" 和 "local.isolation-loadbalancer.active-env" 有交集则生效，否则不生效。
- * {@link  com.bestlink.configuration.RibbonIsolationConfiguration,com.bestlink.configuration.ReactorIsolationLoadBalancerConfiguration}
+ * <p>
  *
  * @author xuzhongkang
+ * @see com.bestlink.configuration.RibbonIsolationConfiguration
+ * @see com.bestlink.configuration.ReactorIsolationLoadBalancerConfiguration
  * @since 2023/9/25 12:54
  **/
 @SuppressWarnings("unchecked")
@@ -44,7 +46,7 @@ public class EnvironmentCondition implements Condition {
         return matched;
     }
 
-    private static boolean envMatches(ConditionContext context) {
+    private boolean envMatches(ConditionContext context) {
         Environment environment = context.getEnvironment();
         Set<String> activeEnvSet = environment.getProperty(SPRING_PROFILES_ACTIVE, Set.class);
         Set<String> specEnvSet = environment.getProperty(ISOLATION_ENV_ACTIVE, Set.class);

@@ -27,11 +27,13 @@ import org.springframework.context.annotation.Configuration;
  * 自定义负载均衡配置类。
  * <p>
  * 适用于 Feign + Ribbon 模式。
- * 限制在开发和测试环境(可以通过配置项进行修改{@link IsolationProperties})下，开发人员启动的本地服务可以注册到 Nacos 中进行本地调试，并且不影响线上环境其他人的请求。
+ * 限制在开发和测试环境(可以通过配置项 {@link IsolationProperties} 进行修改)下，开发人员启动的本地服务可以注册到 Nacos 中进行本地调试，并且不影响线上环境其他人的请求。
  * <p>
- * {@link RibbonIsolationLoadBalancer}
  *
  * @author xuzhongkang
+ * @see RibbonIsolationLoadBalancer
+ * @see IsolationProperties
+ * @see EnvironmentCondition
  * @since 2023/9/15 17:04
  **/
 

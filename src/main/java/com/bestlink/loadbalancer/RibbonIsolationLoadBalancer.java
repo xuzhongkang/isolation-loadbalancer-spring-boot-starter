@@ -1,6 +1,7 @@
 package com.bestlink.loadbalancer;
 
 import com.alibaba.cloud.nacos.ribbon.NacosServer;
+import com.bestlink.configuration.LocalNacosServerInstanceConfiguration;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.AbstractLoadBalancerRule;
 import com.netflix.loadbalancer.ILoadBalancer;
@@ -21,18 +22,20 @@ import java.util.stream.Collectors;
 /**
  * 自定义负载均衡类，用于多个服务实例注册到一个 nacos 空间下时，不同请求选择不同的服务实例，实现流量隔离。
  * 用于 Feign + Ribbon + Nacos 模式。
- * <p>
- * {@link  com.netflix.loadbalancer.AbstractLoadBalancerRule }
- * {@link com.netflix.loadbalancer.IRule}
  *
  * @author xuzhongkang
+ * @see com.netflix.loadbalancer.AbstractLoadBalancerRule
+ * @see com.netflix.loadbalancer.IRule
  * @since 2023/9/15 19:15
  **/
 @Slf4j
 public class RibbonIsolationLoadBalancer extends AbstractLoadBalancerRule {
 
-    private static final String NACOS_METADATA_LOCAL_KEY = "local-instance-id";
-    public static final int RETRY_MAX = 10;
+    /**
+     * @see com.bestlink.configuration.LocalNacosServerInstanceConfiguration#NACOS_METADATA_LOCAL_KEY
+     */
+    private static final String NACOS_METADATA_LOCAL_KEY = LocalNacosServerInstanceConfiguration.NACOS_METADATA_LOCAL_KEY;
+    private static final int RETRY_MAX = 10;
 
     private static final String X_REAL_IP = "x-real-ip";
     private static final String X_FORWARDED_FOR = "x-forwarded-for";

@@ -5,6 +5,7 @@ import com.alibaba.cloud.nacos.NacosDiscoveryProperties;
 import com.alibaba.cloud.nacos.NacosServiceManager;
 import com.alibaba.cloud.nacos.discovery.NacosDiscoveryAutoConfiguration;
 import com.alibaba.cloud.nacos.discovery.NacosWatch;
+import com.bestlink.properties.IsolationProperties;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -37,9 +38,11 @@ import java.util.Map;
 @AutoConfigureAfter(NacosDiscoveryAutoConfiguration.class)
 public class LocalNacosServerInstanceConfiguration {
 
+    public static final String NACOS_METADATA_LOCAL_KEY = "local-instance-id";
 
-    private static final String NACOS_METADATA_LOCAL_KEY = "local-instance-id";
-
+    /**
+     * @see IsolationProperties#getLocalInstanceId()
+     */
     @Value("${local.isolation-loadbalancer.local-instance-id:local-instance}")
     private String localInstanceId;
 

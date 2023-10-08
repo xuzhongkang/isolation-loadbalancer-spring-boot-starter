@@ -20,16 +20,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 /**
- * spring cloud loadbalancer 配置类，注入自定义的负载均衡实现类。
- * 适用于 spring cloud gateway + spring cloud loadbalancer + nacos 模式。
+ * spring cloud loadbalancer 配置类，注入自定义的负载均衡实现类。适用于 spring cloud gateway + spring cloud loadbalancer + nacos 模式。
  * <p>
  * 在本地服务注册到线上环境的注册中心时，通过 {@link ReactorIsolationRobinLoadBalancer } 进行流量隔离。
- * <p>
- * <a href="https://docs.spring.io/spring-cloud-commons/docs/current/reference/html/#spring-cloud-loadbalancer">
- * spring-cloud-loadbalancer
- * </a>
  *
  * @author xuzhongkang
+ * @see <a href="https://docs.spring.io/spring-cloud-commons/docs/current/reference/html/#spring-cloud-loadbalancer">
+ * spring-cloud-loadbalancer
+ * </a>
  * @since 2023/9/8 08:34
  **/
 @Configuration(proxyBeanMethods = false)

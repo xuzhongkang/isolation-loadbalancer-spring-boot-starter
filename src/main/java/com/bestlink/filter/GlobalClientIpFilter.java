@@ -23,7 +23,6 @@ import reactor.core.publisher.Mono;
 
 import java.net.InetSocketAddress;
 
-
 /**
  * 直接访问网关时，记录客户端 ip。
  *
@@ -31,12 +30,16 @@ import java.net.InetSocketAddress;
  * @since 2023/9/20 16:54
  **/
 public class GlobalClientIpFilter implements GlobalFilter, Ordered {
+
     private static final String CLIENT_IP = "X_CLIENT_IP";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         InetSocketAddress remoteAddress = exchange.getRequest().getRemoteAddress();
-        ServerHttpRequest mutableReq = exchange.getRequest().mutate().header(CLIENT_IP, remoteAddress == null ? "" : remoteAddress.getHostString()).build();
+        ServerHttpRequest mutableReq = exchange.getRequest()
+                .mutate()
+                .header(CLIENT_IP, remoteAddress == null ? "" : remoteAddress.getHostString())
+                .build();
         ServerWebExchange mutableExchange = exchange.mutate().request(mutableReq).build();
         return chain.filter(mutableExchange);
     }
@@ -45,5 +48,4 @@ public class GlobalClientIpFilter implements GlobalFilter, Ordered {
     public int getOrder() {
         return 0;
     }
-
 }
