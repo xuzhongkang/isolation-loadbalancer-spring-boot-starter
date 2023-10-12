@@ -1,5 +1,6 @@
 package com.bestlink.condition;
 
+import com.bestlink.configuration.RibbonIsolationAutoConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
@@ -17,7 +18,7 @@ import java.util.Set;
  * <p>
  *
  * @author xuzhongkang
- * @see com.bestlink.configuration.RibbonIsolationConfiguration
+ * @see RibbonIsolationAutoConfiguration
  * @see com.bestlink.configuration.ReactorIsolationLoadBalancerConfiguration
  * @since 2023/9/25 12:54
  **/

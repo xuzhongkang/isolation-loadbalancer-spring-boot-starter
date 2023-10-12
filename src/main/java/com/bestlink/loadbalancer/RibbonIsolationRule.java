@@ -26,10 +26,11 @@ import java.util.stream.Collectors;
  * @author xuzhongkang
  * @see com.netflix.loadbalancer.AbstractLoadBalancerRule
  * @see com.netflix.loadbalancer.IRule
+ * @see <a href=https://cloud.spring.io/spring-cloud-netflix/multi/multi_spring-cloud-ribbon.html#_customizing_the_default_for_all_ribbon_clients> customizing_the_default_for_all_ribbon_clients </a>
  * @since 2023/9/15 19:15
  **/
 @Slf4j
-public class RibbonIsolationLoadBalancer extends AbstractLoadBalancerRule {
+public class RibbonIsolationRule extends AbstractLoadBalancerRule {
 
     /**
      * @see com.bestlink.configuration.LocalNacosServerInstanceConfiguration#NACOS_METADATA_LOCAL_KEY
@@ -151,31 +152,31 @@ public class RibbonIsolationLoadBalancer extends AbstractLoadBalancerRule {
      */
     private String getOriginIp(HttpServletRequest request) {
         String ip = request.getHeader(X_REAL_IP);
-        if (StringUtils.hasLength(ip)) {
-            log.info("get origin ip[{}] from header:{}", ip, X_REAL_IP);
-        }
+        String ipSource = X_REAL_IP;
         if (notFound(ip)) {
             ip = request.getHeader(X_FORWARDED_FOR);
-            log.info("try to get origin ip[{}] from header:{}", ip, X_FORWARDED_FOR);
+            ipSource = X_FORWARDED_FOR;
         }
         if (notFound(ip)) {
             ip = request.getHeader(PROXY_CLIENT_IP);
-            log.info("try to get origin ip[{}] from header:{}", ip, PROXY_CLIENT_IP);
+            ipSource = PROXY_CLIENT_IP;
         }
         if (notFound(ip)) {
             ip = request.getHeader(WL_PROXY_CLIENT_IP);
-            log.info("try to get origin ip[{}] from header:{}", ip, WL_PROXY_CLIENT_IP);
-        }
-        if (notFound(ip)) {
-            // 获取网关中传递的 IP。
-            ip = request.getHeader(X_CLIENT_IP);
-            log.info("try to get origin ip[{}] from header:{}", ip, X_CLIENT_IP);
+            ipSource = WL_PROXY_CLIENT_IP;
         }
         if (notFound(ip)) {
             log.warn("can not get origin ip from {},{},{},{},the most possible cause is had not set Nginx config [proxy_set_header] "
                     , X_FORWARDED_FOR, X_REAL_IP, PROXY_CLIENT_IP, WL_PROXY_CLIENT_IP);
-            ip = request.getRemoteAddr();
+            // 获取网关中传递的 IP。
+            ip = request.getHeader(X_CLIENT_IP);
+            ipSource = X_CLIENT_IP;
         }
+        if (notFound(ip)) {
+            ip = request.getRemoteAddr();
+            ipSource = "getRemoteAddr";
+        }
+        log.info("get ip [{}] from [{}]", ip, ipSource);
         // 处理多IP的情况只取第一个IP
         if (StringUtils.hasLength(ip) && ip.contains(IP_SEPARATOR)) {
             String[] ipArray = ip.split(IP_SEPARATOR);

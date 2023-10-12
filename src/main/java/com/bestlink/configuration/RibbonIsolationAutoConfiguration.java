@@ -15,11 +15,11 @@
 package com.bestlink.configuration;
 
 import com.bestlink.condition.EnvironmentCondition;
-import com.bestlink.loadbalancer.RibbonIsolationLoadBalancer;
+import com.bestlink.loadbalancer.RibbonIsolationRule;
 import com.bestlink.properties.IsolationProperties;
 import com.netflix.loadbalancer.IRule;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.annotation.Bean;
+import org.springframework.cloud.netflix.ribbon.RibbonClients;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
  * <p>
  *
  * @author xuzhongkang
- * @see RibbonIsolationLoadBalancer
+ * @see RibbonIsolationRule
  * @see IsolationProperties
  * @see EnvironmentCondition
  * @since 2023/9/15 17:04
@@ -40,9 +40,7 @@ import org.springframework.context.annotation.Configuration;
 @Conditional(EnvironmentCondition.class)
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnClass(IRule.class)
-public class RibbonIsolationConfiguration {
-    @Bean
-    public IRule isolationLoadBalancer() {
-        return new RibbonIsolationLoadBalancer();
-    }
+@RibbonClients(defaultConfiguration = IsolationRibbonClientConfiguration.class)
+public class RibbonIsolationAutoConfiguration {
+
 }
