@@ -93,7 +93,9 @@ public class RibbonIsolationRule extends AbstractLoadBalancerRule {
             return null;
         }
         if (serverList.size() == 1) {
-            return serverList.get(0);
+            Server server = serverList.get(0);
+            log.info("choose a random server instance [{}]", server != null ? server.getHost() : "");
+            return server;
         }
         Server server = null;
         int count = 0;
@@ -126,7 +128,7 @@ public class RibbonIsolationRule extends AbstractLoadBalancerRule {
             return null;
         }
         String originIp = getOriginIp(request);
-        log.info("this request is from ip:{}", originIp);
+        log.debug("this request is from ip:{}", originIp);
         return allServers.stream().filter(server -> originIp.equals(server.getHost()))
                 // 只匹配元数据中含有本地服务标识（"local-instance-id"）的实例，否则会造成线上服务负载均衡失效。
                 .filter(server -> ((NacosServer) server).getMetadata().containsKey(NACOS_METADATA_LOCAL_KEY))
@@ -166,7 +168,7 @@ public class RibbonIsolationRule extends AbstractLoadBalancerRule {
             ipSource = WL_PROXY_CLIENT_IP;
         }
         if (notFound(ip)) {
-            log.warn("can not get origin ip from {},{},{},{},the most possible cause is had not set Nginx config [proxy_set_header] "
+            log.debug("can not get origin ip from {},{},{},{},the most possible cause is had not set Nginx config [proxy_set_header] "
                     , X_FORWARDED_FOR, X_REAL_IP, PROXY_CLIENT_IP, WL_PROXY_CLIENT_IP);
             // 获取网关中传递的 IP。
             ip = request.getHeader(X_CLIENT_IP);
