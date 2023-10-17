@@ -160,8 +160,8 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
             ip = request.getHeaders().getFirst(WL_PROXY_CLIENT_IP);
         }
         if (notFound(ip)) {
-            log.warn("can not get origin ip from {},{},{},{},the most possible cause is had not set Nginx config [proxy_set_header] ",
-                    X_FORWARDED_FOR, X_REAL_IP, PROXY_CLIENT_IP, WL_PROXY_CLIENT_IP);
+//            log.warn("can not get origin ip from {},{},{},{},the most possible cause is had not set Nginx config [proxy_set_header] ",
+//                    X_FORWARDED_FOR, X_REAL_IP, PROXY_CLIENT_IP, WL_PROXY_CLIENT_IP);
             // 依赖全局过滤器中添加的调用者 ip
             ip = request.getHeaders().getFirst(X_CLIENT_IP);
         }
@@ -169,8 +169,8 @@ public class ReactorIsolationRobinLoadBalancer implements ReactorServiceInstance
         if (StringUtils.hasLength(ip) && ip.contains(IP_SEPARATOR)) {
             String[] ipArray = ip.split(IP_SEPARATOR);
             ip = ipArray[0];
-            log.info("found an origin ip:{}", ip);
         }
+        log.info("found an origin ip:{}", ip);
         return ip;
     }
 
