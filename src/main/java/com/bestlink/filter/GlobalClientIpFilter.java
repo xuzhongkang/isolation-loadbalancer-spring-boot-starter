@@ -14,6 +14,7 @@
 
 package com.bestlink.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -29,6 +30,7 @@ import java.net.InetSocketAddress;
  * @author xuzhongkang
  * @since 2023/9/20 16:54
  **/
+@Slf4j
 public class GlobalClientIpFilter implements GlobalFilter, Ordered {
 
     private static final String CLIENT_IP = "X_CLIENT_IP";
@@ -36,9 +38,11 @@ public class GlobalClientIpFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         InetSocketAddress remoteAddress = exchange.getRequest().getRemoteAddress();
+        String clientIp = remoteAddress == null ? "" : remoteAddress.getHostString();
+        log.info("get client ip : [{}]", clientIp);
         ServerHttpRequest mutableReq = exchange.getRequest()
                 .mutate()
-                .header(CLIENT_IP, remoteAddress == null ? "" : remoteAddress.getHostString())
+                .header(CLIENT_IP, clientIp)
                 .build();
         ServerWebExchange mutableExchange = exchange.mutate().request(mutableReq).build();
         return chain.filter(mutableExchange);
